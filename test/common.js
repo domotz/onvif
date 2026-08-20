@@ -129,11 +129,15 @@ describe('Common functions', () => {
 				done();
 			});
 		});
+		// domotz BT-6884: this used to stub getCapabilities, which connect() only calls
+		// when getServices fails - so against the mockup the stub was never reached and
+		// the test only passed because parseSOAPString recycled the assertion error it
+		// threw into a second callback invocation. Stub a real upstart function instead.
 		it('should return an error when upstart is unfinished', (done) => {
-			cam.getCapabilities = (cb) => cb(new Error('error'));
+			cam.getProfiles = (cb) => cb(new Error('error'));
 			cam.connect((err) => {
 				assert.notStrictEqual(err, null);
-				delete cam.getCapabilities;
+				delete cam.getProfiles;
 				done();
 			});
 		});
